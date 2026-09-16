@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+
+  <!-- EDIT: Change the text shown in the browser tab -->
+  <title>Diablo II // NIGHTFALL CLAN</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!--
+    DESIGN SYSTEM:
+    This page follows the supplied Vaporwave / Outrun design system:
+    - #090014 void background
+    - #FF00FF hot magenta
+    - #00FFFF electric cyan
+    - #FF9900 sunset orange
+    - Orbitron headings
+    - Share Tech Mono UI/body
+    - CRT scanlines, perspective grid, neon glow and terminal windows
+  -->
+
+  <!-- EDIT: Fonts can be replaced here if you prefer different Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       1. DESIGN TOKENS
+       EDIT THESE VARIABLES TO CHANGE THE WHOLE SITE'S COLORS
+       ============================================================ */
+    :root {
+      --void: #090014;
+      --text: #E0E0E0;
+      --panel: rgba(26, 16, 60, 0.82);
+      --magenta: #FF00FF;
+      --cyan: #00FFFF;
+      --orange: #FF9900;
+      --border: #2D1B4E;
+
+      --sunset: linear-gradient(90deg, var(--orange), var(--magenta), var(--cyan));
+      --glow: linear-gradient(180deg, var(--orange), var(--magenta));
+
+      --heading-font: "Orbitron", sans-serif;
+      --body-font: "Share Tech Mono", monospace;
+    }
+
+    /* ============================================================
+       2. RESET / BASE
+       ============================================================ */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: var(--void);
+      color: var(--text);
+      font-family: var(--body-font);
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    /* ============================================================
+       3. ATMOSPHERE
+       ============================================================ */
+
+    /* Huge blurred vaporwave sun */
+    .sun {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      top: 8%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: var(--glow);
+      filter: blur(100px);
+      opacity: .18;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Perspective floor grid */
+    .grid {
+      position: fixed;
+      left: -20%;
+      bottom: -18%;
+      width: 140%;
+      height: 70%;
+      background-image:
+        linear-gradient(transparent 95%, rgba(255, 0, 255, .75) 95%),
+        linear-gradient(90deg, transparent 95%, rgba(0, 255, 255, .55) 95%);
+      background-size: 40px 40px;
+      transform: perspective(500px) rotateX(60deg) translateY(-100px) scale(2);
+      transform-origin: top center;
+      mask-image: linear-gradient(to bottom, transparent, black);
+      -webkit-mask-image: linear-gradient(to bottom, transparent, black);
+      opacity: .32;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Global CRT scanline overlay */
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(
+          rgba(18, 16, 20, 0) 50%,
+          rgba(0, 0, 0, .25) 50%
+        ),
+        linear-gradient(
+          90deg,
+          rgba(255, 0, 0, .035),
+          rgba(0, 255, 0, .015),
+          rgba(0, 0, 255, .035)
+        );
+      background-size: 100% 4px, 100% 100%;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    /* Small decorative stars / pixels */
+    .stars {
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(var(--magenta) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: .08;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ============================================================
+       4. GLOBAL LAYOUT
+       ============================================================ */
+    .page {
+      position: relative;
+      z-index: 10;
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    section {
+      position: relative;
+      padding: 110px 0;
+    }
+
+    .section-label {
+      display: inline-block;
+      margin-bottom: 16px;
+      color: var(--cyan);
+      font-size: .85rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px rgba(0,255,255,.8);
+    }
+
+    .section-title {
+      max-width: 850px;
+      margin-bottom: 28px;
+      color: #fff;
+      font-family: var(--heading-font);
+      font-size: clamp(2rem, 6vw, 4.5rem);
+      font-weight: 900;
+      line-height: .98;
+      letter-spacing: -.04em;
+      text-shadow: 0 0 20px rgba(255,255,255,.35);
+    }
+
+    .section-copy {
+      max-width: 720px;
+      color: rgba(224,224,224,.75);
+      font-size: 1.05rem;
+    }
+
+    /* ============================================================
+       5. NAVIGATION
+       ============================================================ */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      border-bottom: 1px solid rgba(0,255,255,.35);
+      background: rgba(9,0,20,.82);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-inner {
+      min-height: 74px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .logo {
+      font-family: var(--heading-font);
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+    }
+
+    .logo span {
+      color: var(--magenta);
+      text-shadow: 0 0 12px var(--magenta);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(224,224,224,.72);
+      font-size: .8rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      transition: all .2s linear;
+    }
+
+    .nav-links a:hover {
+      color: var(--cyan);
+      text-shadow: 0 0 12px var(--cyan);
+    }
+
+    /* ============================================================
+       6. BUTTONS
+       ============================================================ */
+    .btn {
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 24px;
+      border: 2px solid var(--cyan);
+      border-radius: 0;
+      background: transparent;
+      color: var(--cyan);
+      cursor: pointer;
+      font-size: .85rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      transform: skewX(-12deg);
+      transition: all .2s linear;
+    }
+
+    .btn span {
+      display: inline-block;
+      transform: skewX(12deg);
+    }
+
+    .btn:hover {
+      transform: skewX(0) scale(1.04);
+      background: var(--cyan);
+      color: #000;
+      box-shadow: 0 0 20px var(--cyan);
+    }
+
+    .btn.magenta {
+      border-color: var(--magenta);
+      background: var(--magenta);
+      color: #fff;
+    }
+
+    .btn.magenta:hover {
+      box-shadow: 0 0 25px var(--magenta);
+    }
+
+    .btn.orange {
+      border-color: var(--orange);
+      color: var(--orange);
+    }
+
+    .btn.orange:hover {
+      background: var(--orange);
+      color: #000;
+      box-shadow: 0 0 20px var(--orange);
+    }
+
+    /* ============================================================
+       7. HERO
+       ============================================================ */
+    .hero {
+      min-height: 760px;
+      display: grid;
+      place-items: center;
+      padding-top: 80px;
+      overflow: hidden;
+    }
+
+    .hero-content {
+      position: relative;
+      max-width: 1050px;
+      text-align: center;
+    }
+
+    .terminal-line {
+      margin-bottom: 24px;
+      color: var(--cyan);
+      font-size: .9rem;
+      letter-spacing: .16em;
+      text-shadow: 0 0 10px var(--cyan);
+    }
+
+    .hero h1 {
+      font-family: var(--heading-font);
+      font-size: clamp(3.3rem, 11vw, 8rem);
+      font-weight: 900;
+      line-height: .84;
+      letter-spacing: -.055em;
+      background: var(--sunset);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 0 30px rgba(255,0,255,.45));
+    }
+
+    .hero h1 small {
+      display: block;
+      margin-top: 16px;
+      color: #fff;
+      font-size: .3em;
+      letter-spacing: .24em;
+      filter: drop-shadow(0 0 10px rgba(255,255,255,.55));
+    }
+
+    .hero-copy {
+      max-width: 720px;
+      margin: 30px auto;
+      color: rgba(224,224,224,.78);
+      font-size: 1.1rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-top: 34px;
+    }
+
+    .hero-terminal {
+      width: min(720px, 100%);
+      margin: 58px auto 0;
+      border: 2px solid var(--cyan);
+      background: rgba(0,0,0,.75);
+      box-shadow: 0 0 20px rgba(0,255,255,.22);
+      text-align: left;
+    }
+
+    .terminal-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--cyan);
+      background: rgba(0,255,255,.08);
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+
+    .dot.magenta { background: var(--magenta); box-shadow: 0 0 8px var(--magenta); }
+    .dot.cyan { background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+    .dot.orange { background: var(--orange); box-shadow: 0 0 8px var(--orange); }
+
+    .terminal-body {
+      padding: 20px;
+      color: rgba(224,224,224,.82);
+      font-size: .9rem;
+    }
+
+    .terminal-body .prompt {
+      color: var(--magenta);
+    }
+
+    .terminal-body .success {
+      color: var(--cyan);
+    }
+
+    /* ============================================================
+       8. CARDS / PANELS
+       ============================================================ */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      margin-top: 50px;
+    }
+
+    .card {
+      position: relative;
+      padding: 28px;
+      border: 1px solid rgba(255,0,255,.35);
+      border-top: 2px solid var(--cyan);
+      background: var(--panel);
+      backdrop-filter: blur(12px);
+      transition: all .2s linear;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      border-color: var(--magenta);
+      box-shadow: 0 0 30px rgba(255,0,255,.25);
+    }
+
+    .card-icon {
+      width: 52px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 24px;
+      border: 2px solid var(--magenta);
+      color: var(--magenta);
+      font-family: var(--heading-font);
+      font-weight: 900;
+      transform: rotate(45deg);
+      transition: all .2s linear;
+      text-shadow: 0 0 10px var(--magenta);
+    }
+
+    .card:hover .card-icon {
+      transform: rotate(90deg);
+      border-color: var(--cyan);
+      color: var(--cyan);
+      text-shadow: 0 0 10px var(--cyan);
+    }
+
+    .card-icon span {
+      transform: rotate(-45deg);
+    }
+
+    .card:hover .card-icon span {
+      transform: rotate(-90deg);
+    }
+
+    .card h3 {
+      margin-bottom: 12px;
+      color: var(--cyan);
+      font-family: var(--heading-font);
+      font-size: 1.25rem;
+      text-shadow: 0 0 7px rgba(0,255,255,.8);
+    }
+
+    .card p {
+      color: rgba(224,224,224,.68);
+      font-size: .92rem;
+    }
+
+    /* ============================================================
+       9. CLAN STATS
+       ============================================================ */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-top: 45px;
+    }
+
+    .stat {
+      padding: 24px;
+      border: 1px solid var(--border);
+      background: rgba(26,16,60,.65);
+      text-align: center;
+    }
+
+    .stat strong {
+      display: block;
+      color: #fff;
+      font-family: var(--heading-font);
+      font-size: 2.4rem;
+      text-shadow: 0 0 15px var(--magenta);
+    }
+
+    .stat span {
+      color: var(--cyan);
+      font-size: .75rem;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    /* ============================================================
+       10. MEMBERS / ROSTER
+       ============================================================ */
+    .roster {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-top: 45px;
+    }
+
+    .member {
+      padding: 20px;
+      border: 2px solid rgba(0,255,255,.25);
+      background: rgba(0,0,0,.48);
+      transition: all .2s linear;
+    }
+
+    .member:hover {
+      border-color: var(--cyan);
+      box-shadow: 0 0 18px rgba(0,255,255,.25);
+    }
+
+    .avatar {
+      width: 64px;
+      height: 64px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 16px;
+      border: 2px solid var(--magenta);
+      color: var(--magenta);
+      font-family: var(--heading-font);
+      font-weight: 900;
+      box-shadow: 0 0 15px rgba(255,0,255,.25);
+    }
+
+    .member h3 {
+      color: #fff;
+      font-family: var(--heading-font);
+      font-size: 1rem;
+    }
+
+    .member p {
+      margin-top: 4px;
+      color: var(--cyan);
+      font-size: .78rem;
+      text-transform: uppercase;
+    }
+
+    /* ============================================================
+       11. BUILD / CLASS TABLE
+       ============================================================ */
+    .terminal-window {
+      margin-top: 45px;
+      border: 2px solid var(--cyan);
+      background: rgba(0,0,0,.78);
+      box-shadow: 0 0 25px rgba(0,255,255,.15);
+      overflow-x: auto;
+    }
+
+    .terminal-content {
+      min-width: 680px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 17px 18px;
+      border-bottom: 1px solid rgba(45,27,78,.9);
+      text-align: left;
+    }
+
+    th {
+      color: var(--magenta);
+      font-size: .75rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      background: rgba(255,0,255,.06);
+    }
+
+    td {
+      color: rgba(224,224,224,.78);
+    }
+
+    td:first-child {
+      color: var(--cyan);
+    }
+
+    /* ============================================================
+       12. EVENTS / RAID SCHEDULE
+       ============================================================ */
+    .events {
+      display: grid;
+      gap: 16px;
+      margin-top: 45px;
+    }
+
+    .event {
+      display: grid;
+      grid-template-columns: 130px 1fr auto;
+      gap: 20px;
+      align-items: center;
+      padding: 20px;
+      border-left: 3px solid var(--magenta);
+      background: rgba(26,16,60,.68);
+      transition: all .2s linear;
+    }
+
+    .event:hover {
+      transform: translateX(8px);
+      border-left-color: var(--cyan);
+      box-shadow: -10px 0 25px rgba(0,255,255,.12);
+    }
+
+    .event-date {
+      color: var(--orange);
+      font-family: var(--heading-font);
+      font-size: .9rem;
+    }
+
+    .event h3 {
+      color: #fff;
+      font-family: var(--heading-font);
+      font-size: 1rem;
+    }
+
+    .event p {
+      color: rgba(224,224,224,.62);
+      font-size: .8rem;
+    }
+
+    .event-status {
+      color: var(--cyan);
+      font-size: .72rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    /* ============================================================
+       13. JOIN / CTA
+       ============================================================ */
+    .join-box {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 55px;
+      border: 2px solid var(--magenta);
+      background: rgba(26,16,60,.82);
+      box-shadow:
+        0 0 25px rgba(255,0,255,.18),
+        inset 0 0 35px rgba(0,255,255,.04);
+      text-align: center;
+    }
+
+    .join-box h2 {
+      color: #fff;
+      font-family: var(--heading-font);
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1;
+      text-shadow: 0 0 20px rgba(255,255,255,.3);
+    }
+
+    .join-box p {
+      max-width: 650px;
+      margin: 20px auto 30px;
+      color: rgba(224,224,224,.7);
+    }
+
+    /* ============================================================
+       14. FOOTER
+       ============================================================ */
+    footer {
+      padding: 35px 0 55px;
+      border-top: 1px solid rgba(0,255,255,.25);
+      color: rgba(224,224,224,.45);
+      text-align: center;
+      font-size: .75rem;
+      letter-spacing: .08em;
+    }
+
+    /* ============================================================
+       15. RESPONSIVE
+       ============================================================ */
+    @media (max-width: 900px) {
+      .card-grid,
+      .roster {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .nav-links {
+        display: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      section {
+        padding: 80px 0;
+      }
+
+      .container {
+        width: min(100% - 24px, 1180px);
+      }
+
+      .hero {
+        min-height: 680px;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .card-grid,
+      .stats,
+      .roster {
+        grid-template-columns: 1fr;
+      }
+
+      .event {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .event-status {
+        margin-top: 6px;
+      }
+
+      .join-box {
+        padding: 35px 20px;
+      }
+
+      .sun {
+        width: 420px;
+        height: 420px;
+      }
+
+      .grid {
+        opacity: .22;
+      }
+    }
+
+    /* Respect users who prefer reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Background visual layers -->
+  <div class="sun" aria-hidden="true"></div>
+  <div class="grid" aria-hidden="true"></div>
+  <div class="stars" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <div class="page">
+
+    <!-- ==========================================================
+         NAVIGATION
+         EDIT: Change links or add/remove menu items here.
+         ========================================================== -->
+    <nav>
+      <div class="container nav-inner">
+        <!-- EDIT: Clan name / logo -->
+        <a class="logo" href="#top">D2<span>//</span>NIGHTFALL</a>
+
+        <ul class="nav-links">
+          <li><a href="#clan">Clan</a></li>
+          <li><a href="#roster">Roster</a></li>
+          <li><a href="#builds">Builds</a></li>
+          <li><a href="#events">Events</a></li>
+          <li><a href="#join">Join</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <main id="top">
+
+      <!-- ========================================================
+           HERO
+           EDIT: Main clan slogan and introduction.
+           ======================================================== -->
+      <section class="hero">
+        <div class="container hero-content">
+
+          <!-- EDIT: Small status line -->
+          <div class="terminal-line">&gt; SYSTEM ONLINE // SANCTUARY NODE ACTIVE</div>
+
+          <!-- EDIT: Main headline -->
+          <h1>
+            NIGHTFALL
+            <small>DIABLO II RESURRECTED CLAN</small>
+          </h1>
+
+          <!-- EDIT: Hero description -->
+          <p class="hero-copy">
+            We descend into Sanctuary together. Hardcore runs, ladder pushing,
+            PvP, trading, builds and late-night chaos — organized like a
+            command terminal from the year 2088.
+          </p>
+
+          <div class="hero-actions">
+            <!-- EDIT: Change these URLs to your Discord / Battle.net / forum -->
+            <a class="btn magenta" href="#join"><span>Join The Clan</span></a>
+            <a class="btn" href="#events"><span>View Events</span></a>
+          </div>
+
+          <!-- Retro terminal -->
+          <div class="hero-terminal" aria-label="Clan terminal">
+            <div class="terminal-bar">
+              <div class="dot magenta"></div>
+              <div class="dot cyan"></div>
+              <div class="dot orange"></div>
+            </div>
+
+            <div class="terminal-body">
+              <div><span class="prompt">&gt; </span>loading_sanctuary.exe</div>
+              <div><span class="prompt">&gt; </span>checking clan_status...</div>
+              <div><span class="success">[ONLINE]</span> 47 warriors detected.</div>
+              <div><span class="success">[READY]</span> portals can be opened.</div>
+              <div><span class="prompt">&gt; </span><span class="success">ENTER AT YOUR OWN RISK_</span></div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ========================================================
+           CLAN FEATURES
+           EDIT: Change the three feature cards.
+           ======================================================== -->
+      <section id="clan">
+        <div class="container">
+          <div class="section-label">&gt; clan_protocol</div>
+
+          <h2 class="section-title">
+            Built for players who never leave Sanctuary alone.
+          </h2>
+
+          <p class="section-copy">
+            Replace this paragraph with your clan's real mission,
+            community rules, goals and playstyle.
+          </p>
+
+          <div class="card-grid">
+
+            <article class="card">
+              <div class="card-icon"><span>01</span></div>
+              <h3>LADDER OPS</h3>
+              <p>
+                Coordinated ladder starts, leveling groups, farming rotations
+                and endgame progression.
+              </p>
+            </article>
+
+            <article class="card">
+              <div class="card-icon"><span>02</span></div>
+              <h3>HELL RUNS</h3>
+              <p>
+                Chaos Sanctuary, Baal, Terror Zones and high-level farming
+                sessions with the clan.
+              </p>
+            </article>
+
+            <article class="card">
+              <div class="card-icon"><span>03</span></div>
+              <h3>PVP ARENA</h3>
+              <p>
+                Organize duels, tournaments and build testing without turning
+                the clan chat into a normal website.
+              </p>
+            </article>
+
+          </div>
+
+          <!-- ======================================================
+               STATS
+               EDIT: Replace numbers and labels with your real clan data.
+               ====================================================== -->
+          <div class="stats">
+            <div class="stat">
+              <strong>47</strong>
+              <span>Active Members</span>
+            </div>
+
+            <div class="stat">
+              <strong>12</strong>
+              <span>Years of D2</span>
+            </div>
+
+            <div class="stat">
+              <strong>08</strong>
+              <span>Core Classes</span>
+            </div>
+
+            <div class="stat">
+              <strong>24/7</strong>
+              <span>Portal Status</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================
+           ROSTER
+           EDIT: Replace names/classes/roles with your actual players.
+           Duplicate a .member block to add more players.
+           ======================================================== -->
+      <section id="roster">
+        <div class="container">
+          <div class="section-label">&gt; player_roster</div>
+
+          <h2 class="section-title">The operators behind the portals.</h2>
+
+          <div class="roster">
+
+            <article class="member">
+              <div class="avatar">01</div>
+              <h3>NECROBYTE</h3>
+              <p>Necromancer // Admin</p>
+            </article>
+
+            <article class="member">
+              <div class="avatar">02</div>
+              <h3>VOIDWITCH</h3>
+              <p>Sorceress // Officer</p>
+            </article>
+
+            <article class="member">
+              <div class="avatar">03</div>
+              <h3>IRONMAUL</h3>
+              <p>Barbarian // Raid Lead</p>
+            </article>
+
+            <article class="member">
+              <div class="avatar">04</div>
+              <h3>FAITHLESS</h3>
+              <p>Paladin // PvP Lead</p>
+            </article>
+
+            <article class="member">
+              <div class="avatar">05</div>
+              <h3>SHADOWRUN</h3>
+              <p>Assassin // Scout</p>
+            </article>
+
+            <article class="member">
+              <div class="avatar">06</div>
+              <h3>FROSTBITE</h3>
+              <p>Druid // Farmer</p>
+            </article>
+
+            <article class="member">
+              <div class="avatar">07</div>
+              <h3>AMAZONIX</h3>
+              <p>Amazon // Ranged DPS</p>
+            </article>
+
+            <article class="member">
+              <div class="avatar">08</div>
+              <h3>GREEDMACHINE</h3>
+              <p>Paladin // Trader</p>
+            </article>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================
+           BUILDS / CLASS DATABASE
+           EDIT: Change the table rows to match your clan's builds.
+           ======================================================== -->
+      <section id="builds">
+        <div class="container">
+          <div class="section-label">&gt; build_database</div>
+
+          <h2 class="section-title">Loadout terminal.</h2>
+
+          <p class="section-copy">
+            Use this section as a quick reference for recommended clan builds,
+            farming roles or ladder-start strategies.
+          </p>
+
+          <div class="terminal-window">
+            <div class="terminal-bar">
+              <div class="dot magenta"></div>
+              <div class="dot cyan"></div>
+              <div class="dot orange"></div>
+              <span style="margin-left:10px;color:rgba(224,224,224,.55);">
+                /clan/builds/database.log
+              </span>
+            </div>
+
+            <div class="terminal-content">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Class</th>
+                    <th>Build</th>
+                    <th>Primary Role</th>
+                    <th>Endgame</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <!-- EDIT: Add or remove build rows -->
+                  <tr>
+                    <td>Sorceress</td>
+                    <td>Frozen Orb / Fireball</td>
+                    <td>Fast Farming</td>
+                    <td>★★★★★</td>
+                  </tr>
+
+                  <tr>
+                    <td>Paladin</td>
+                    <td>Hammerdin</td>
+                    <td>Chaos / Baal</td>
+                    <td>★★★★★</td>
+                  </tr>
+
+                  <tr>
+                    <td>Necromancer</td>
+                    <td>Summon</td>
+                    <td>Group Support</td>
+                    <td>★★★★☆</td>
+                  </tr>
+
+                  <tr>
+                    <td>Amazon</td>
+                    <td>Lightning Javazon</td>
+                    <td>Terror Zones</td>
+                    <td>★★★★★</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================
+           EVENTS
+           EDIT: Replace these events with your actual schedule.
+           ======================================================== -->
+      <section id="events">
+        <div class="container">
+          <div class="section-label">&gt; upcoming_operations</div>
+
+          <h2 class="section-title">Portal schedule.</h2>
+
+          <div class="events">
+
+            <article class="event">
+              <div class="event-date">FRI // 21:00</div>
+              <div>
+                <h3>HELLFIRE FRIDAY</h3>
+                <p>Chaos + Baal rotation. Voice chat required.</p>
+              </div>
+              <div class="event-status">OPEN</div>
+            </article>
+
+            <article class="event">
+              <div class="event-date">SAT // 20:00</div>
+              <div>
+                <h3>PVP NIGHT</h3>
+                <p>Open duels and build testing.</p>
+              </div>
+              <div class="event-status">OPEN</div>
+            </article>
+
+            <article class="event">
+              <div class="event-date">SUN // 18:00</div>
+              <div>
+                <h3>TRADE TERMINAL</h3>
+                <p>Clan trading session and gear exchange.</p>
+              </div>
+              <div class="event-status">OPEN</div>
+            </article>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================
+           JOIN SECTION
+           EDIT: Change Discord URL and recruitment text.
+           ======================================================== -->
+      <section id="join">
+        <div class="container">
+          <div class="join-box">
+
+            <div class="section-label">&gt; recruitment_protocol</div>
+
+            <h2>ENTER SANCTUARY.</h2>
+
+            <p>
+              Looking for a Diablo II clan? Replace this text with your
+              recruitment requirements, age requirement, playstyle and
+              community expectations.
+            </p>
+
+            <!-- EDIT: Replace # with your actual Discord invite URL -->
+            <a class="btn magenta" href="#"><span>Join Discord</span></a>
+
+            <!-- EDIT: Optional second button -->
+            <a class="btn orange" href="#top"><span>Return To Top</span></a>
+
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ==========================================================
+         FOOTER
+         EDIT: Clan copyright / social links / contact information.
+         ========================================================== -->
+    <footer>
+      <div class="container">
+        D2//NIGHTFALL &nbsp;|&nbsp; SANCTUARY NETWORK &nbsp;|&nbsp; 2026
+        <br><br>
+        Diablo II and Diablo II: Resurrected are trademarks of Blizzard Entertainment.
+        This is a fan-made community site.
+      </div>
+    </footer>
+
+  </div>
+
+  <!--
+    ==============================================================
+    OPTIONAL JAVASCRIPT
+    This page intentionally uses almost no JavaScript.
+    The design is mostly HTML + CSS, so it is easy to customize.
+    ==============================================================
+
+    If you later want features such as:
+    - Discord member count
+    - live clan roster
+    - countdown timers
+    - character build filters
+    - event calendar
+    you can add JavaScript here.
+  -->
+
+</body>
+</html>
